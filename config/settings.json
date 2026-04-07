@@ -1,0 +1,6 @@
+{
+    "daily_new_words": 10,
+    "daily_review_words": 10,
+    "review_words_growth_days": 3,
+    "forgetting_curve_halflife": 3.0
+}

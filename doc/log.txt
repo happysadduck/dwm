@@ -1,0 +1,3 @@
+0.1
+有prompt_generator了
+添加了README中对于设置和单词表导入方法的说明.

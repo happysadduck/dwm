@@ -30,13 +30,13 @@ def compute_forgetting_probability(
     """
     计算遗忘概率
     delta_t: 距离上次复习的天数
-    base_halflife: 基础半衰期（天）
+    base_halflife: 基础半衰期(天)
     recognized_count: 累计认识次数
     growth_factor: 每次认识后半衰期的增长系数
     """
     # 个性化半衰期：基础半衰期 * (1 + growth_factor * (recognized_count - 1))
     effective_halflife = base_halflife * (1 + growth_factor * (recognized_count - 1))
-    # 避免除零，设置上限（可选，365天足够长）
+    # 避免除零, 设置上限(可选, 365天足够长)
     effective_halflife = min(effective_halflife, 365)
     if delta_t <= 0:
         return 1.0
@@ -52,7 +52,7 @@ def select_review_words(
     all_words_dict,
 ):
     """
-    从已学单词中根据遗忘概率加权随机抽样，返回选中的单词列表（包含英文和中文）
+    从已学单词中根据遗忘概率加权随机抽样, 返回选中的单词列表(包含英文和中文)
     learned_words: 用户数据中的 learned_words 字典
     current_day: 当前学习天数
     base_halflife: 基础半衰期
@@ -63,11 +63,11 @@ def select_review_words(
     candidates = []
     weights = []
     for word, info in learned_words.items():
-        # 只选择还在单词表中的单词（防止单词表更新后已学词被删除）
+        # 只选择还在单词表中的单词(防止单词表更新后已学词被删除)
         if word not in all_words_dict:
             continue
-        delta_t = current_day - info.get("last_review", 0)
-        rec_count = info.get("recognized_count", 0)
+        delta_t = current_day - info.get("last_review")
+        rec_count = info.get("recognized_count")
         p = compute_forgetting_probability(
             delta_t, base_halflife, rec_count, growth_factor
         )
@@ -76,7 +76,7 @@ def select_review_words(
 
     if not candidates:
         return []
-    # 如果候选词不足 target_count，则全部返回
+    # 如果候选词不足 target_count, 则全部返回
     n = min(target_count, len(candidates))
     selected = weighted_sample_without_replacement(candidates, weights=weights, k=n)
 
@@ -97,11 +97,11 @@ def build_prompt(selected_words_with_meanings):
         words_lines.append(f"- {word}")
     words_list_str = "\n".join(words_lines)
 
-    prompt = f"""Write a short English story that MUST include ALL the words below (and you should **bold** them) :
+    prompt = f"""Write a simple English story that MUST include ALL the words below (and you should **bold** them) :
 
 {words_list_str}
 
-The story should be natural and coherent. Do NOT limit the length; write as much as needed to make it interesting.
+The story should be natural and coherent. 
 Only output the story, without extra explanations."""
 
     return prompt
@@ -126,7 +126,7 @@ def generate_today_prompt():
     base_halflife = config["forgetting_curve_halflife"]
     growth_factor = config["halflife_growth_factor"]
 
-    # 根据当前天数动态调整 daily_review_words（每 review_words_growth_days 天 +1）
+    # 根据当前天数动态调整 daily_review_words(每 review_words_growth_days 天 +1)
     growth_days = config["review_words_growth_days"]
     if growth_days > 0:
         extra = (current_day - 1) // growth_days
@@ -146,7 +146,7 @@ def generate_today_prompt():
     updated = False
     for word, _ in selected:
         learned_words[word]["recognized_count"] = (
-            learned_words[word].get("recognized_count", 0) + 1
+            learned_words[word].get("recognized_count") + 1
         )
         learned_words[word]["last_review"] = current_day
         updated = True
@@ -160,7 +160,7 @@ def generate_today_prompt():
     return prompt, selected
 
 
-# 如果直接运行此脚本，可以测试
+# 如果直接运行此脚本, 可以测试
 if __name__ == "__main__":
     prompt, words = generate_today_prompt()
     print("===== 提示词 =====")

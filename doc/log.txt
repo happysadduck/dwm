@@ -1,3 +1,8 @@
 0.1
 有prompt_generator了
 添加了README中对于设置和单词表导入方法的说明.
+
+0.2
+有new_word(新词学习器)了
+现在单词会随着复习越来越难以忘记
+修复了propt_generator会在提示词中包含中文释义的bug

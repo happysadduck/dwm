@@ -1,2 +1,5 @@
 .vscode/
 *.csv
+*.json
+__pycache__/
+examination.txt
